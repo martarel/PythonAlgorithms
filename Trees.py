@@ -96,3 +96,53 @@ def dfs(node, parent):
     if neigh != parent:
       dfs(neigh, node)
   end[node] = timer - 1
+
+
+
+#----------------------------------
+
+#Heavy light decomposition on trees (implement specific queries separately)
+n = int(input())
+graph = [[] * n]
+for _ in range(n-1):
+  a, b = map(int, input().split())
+  graph[a].append(b)
+  graph[b].append(a)
+depth = [] * n
+parent = [] * n
+heavy = [-1] * n
+head = [] * n
+pos = [] * n
+curr = 0
+
+def dfs(v):
+  size = 1
+  max_c_size = 0
+  for c in graph[v]:
+    parent[c] = v
+    depth[c] = depth[v] + 1
+    c_size = dfs(c)
+    size += c_size
+    if c_size > max_c_size:
+      max_c_size = c_size
+      heavy[v] = c
+  return size 
+
+def decompose(v, h):
+  global curr 
+  head[v] = h
+  curr += 1
+  pos[v] = curr
+  if heavy[v] != -1:
+    decompose(heavy[v], h)
+  for c in graph[v]:
+    if c != parent[v] and c!= heavy[v]:
+      decompose(c, c)
+
+dfs(0)
+decompose(0, 0)
+
+
+
+
+
